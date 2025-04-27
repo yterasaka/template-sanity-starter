@@ -206,6 +206,7 @@ export type Project = {
   _createdAt: string
   _updatedAt: string
   _rev: string
+  language?: string
   title?: string
   slug?: Slug
   overview?: Array<{
@@ -290,6 +291,7 @@ export type Page = {
   _createdAt: string
   _updatedAt: string
   _rev: string
+  language?: string
   title?: string
   slug?: Slug
   overview?: Array<{
@@ -415,6 +417,7 @@ export type Home = {
   _createdAt: string
   _updatedAt: string
   _rev: string
+  language?: string
   title?: string
   overview?: Array<{
     children?: Array<{
@@ -474,7 +477,7 @@ export type AllSanitySchemaTypes =
 export declare const internalGroqTypeReferenceTo: unique symbol
 // Source: ./sanity/lib/queries.ts
 // Variable: homePageQuery
-// Query: *[_type == "home" && __i18n_lang == $language][0]{    _id,    _type,    overview,    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage,        overview,        "slug": slug.current,        tags,        title,      }    },    title,  }
+// Query: *[_type == "home" && language == $language][0]{    _id,    _type,    overview,    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage,        overview,        "slug": slug.current,        tags,        title,      }    },    title,    // Get the translations metadata    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{      title,      language    }  }
 export type HomePageQueryResult = {
   _id: string
   _type: 'home'
@@ -531,9 +534,13 @@ export type HomePageQueryResult = {
     title: string | null
   }> | null
   title: string | null
+  _translations: Array<{
+    title: string | null
+    language: string | null
+  } | null>
 } | null
 // Variable: pagesBySlugQuery
-// Query: *[_type == "page" && slug.current == $slug && __i18n_lang == $language][0] {    _id,    _type,    body,    overview,    title,    "slug": slug.current,  }
+// Query: *[_type == "page" && slug.current == $slug && language == $language][0] {    _id,    _type,    body,    overview,    title,    "slug": slug.current,    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{      title,      "slug": slug.current,      language    }  }
 export type PagesBySlugQueryResult = {
   _id: string
   _type: 'page'
@@ -591,9 +598,22 @@ export type PagesBySlugQueryResult = {
   }> | null
   title: string | null
   slug: string | null
+  _translations: Array<
+    | {
+        title: string | null
+        slug: null
+        language: string | null
+      }
+    | {
+        title: string | null
+        slug: string | null
+        language: string | null
+      }
+    | null
+  >
 } | null
 // Variable: projectBySlugQuery
-// Query: *[_type == "project" && slug.current == $slug && __i18n_lang == $language][0] {    _id,    _type,    client,    coverImage,    description,    duration,    overview,    site,    "slug": slug.current,    tags,    title,  }
+// Query: *[_type == "project" && slug.current == $slug && language == $language][0] {    _id,    _type,    client,    coverImage,    description,    duration,    overview,    site,    "slug": slug.current,    tags,    title,    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{      title,      "slug": slug.current,      language    }  }
 export type ProjectBySlugQueryResult = {
   _id: string
   _type: 'project'
@@ -667,6 +687,19 @@ export type ProjectBySlugQueryResult = {
   slug: string | null
   tags: Array<string> | null
   title: string | null
+  _translations: Array<
+    | {
+        title: string | null
+        slug: null
+        language: string | null
+      }
+    | {
+        title: string | null
+        slug: string | null
+        language: string | null
+      }
+    | null
+  >
 } | null
 // Variable: settingsQuery
 // Query: *[_type == "settings"][0]{    _id,    _type,    footer,    menuItems[]{      _key,      ...@->{        _type,        "slug": slug.current,        title      }    },    ogImage,  }
@@ -725,17 +758,26 @@ export type SettingsQueryResult = {
   } | null
 } | null
 // Variable: slugsByTypeQuery
-// Query: *[_type == $type && defined(slug.current) && __i18n_lang == $language]{"slug": slug.current}
+// Query: *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}
 export type SlugsByTypeQueryResult = Array<{
   slug: string | null
+}>
+// Variable: debugQuery
+// Query: *[_type == "home"] {    _id,    _type,    language,    title  }
+export type DebugQueryResult = Array<{
+  _id: string
+  _type: 'home'
+  language: string | null
+  title: string | null
 }>
 
 declare module '@sanity/client' {
   interface SanityQueries {
-    '\n  *[_type == "home" && __i18n_lang == $language][0]{\n    _id,\n    _type,\n    overview,\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage,\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n      }\n    },\n    title,\n  }\n': HomePageQueryResult
-    '\n  *[_type == "page" && slug.current == $slug && __i18n_lang == $language][0] {\n    _id,\n    _type,\n    body,\n    overview,\n    title,\n    "slug": slug.current,\n  }\n': PagesBySlugQueryResult
-    '\n  *[_type == "project" && slug.current == $slug && __i18n_lang == $language][0] {\n    _id,\n    _type,\n    client,\n    coverImage,\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n  }\n': ProjectBySlugQueryResult
+    '\n  *[_type == "home" && language == $language][0]{\n    _id,\n    _type,\n    overview,\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage,\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n      }\n    },\n    title,\n    // Get the translations metadata\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      language\n    }\n  }\n': HomePageQueryResult
+    '\n  *[_type == "page" && slug.current == $slug && language == $language][0] {\n    _id,\n    _type,\n    body,\n    overview,\n    title,\n    "slug": slug.current,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      "slug": slug.current,\n      language\n    }\n  }\n': PagesBySlugQueryResult
+    '\n  *[_type == "project" && slug.current == $slug && language == $language][0] {\n    _id,\n    _type,\n    client,\n    coverImage,\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      "slug": slug.current,\n      language\n    }\n  }\n': ProjectBySlugQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage,\n  }\n': SettingsQueryResult
-    '\n  *[_type == $type && defined(slug.current) && __i18n_lang == $language]{"slug": slug.current}\n': SlugsByTypeQueryResult
+    '\n  *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}\n': SlugsByTypeQueryResult
+    '\n  *[_type == "home"] {\n    _id,\n    _type,\n    language,\n    title\n  }\n': DebugQueryResult
   }
 }

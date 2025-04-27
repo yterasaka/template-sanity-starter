@@ -33,29 +33,15 @@ export function middleware(request: NextRequest) {
 
   const pathnameLocale = getLocaleFromPath(pathname)
 
-  // If there's no locale in the path
+  // 言語コードがない場合
   if (!pathnameLocale) {
-    const locale = getNegotiatedLocale(request)
-
-    // If the negotiated locale is the default language, don't add language prefix
-    if (locale === i18n.defaultLanguage) {
-      // Create a rewrite to serve the content from the [lang] folder without changing the URL
-      const url = request.nextUrl.clone()
-      url.pathname = `/${locale}${pathname}`
-      return NextResponse.rewrite(url)
-    } else {
-      // For non-default languages, redirect to include the language prefix
-      return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url))
-    }
-  }
-
-  // If the locale is the default language and is in the path, redirect to remove it
-  if (pathnameLocale === i18n.defaultLanguage) {
+    // URLを内部的に/en/...にリライト
     const url = request.nextUrl.clone()
-    url.pathname = pathname.replace(`/${i18n.defaultLanguage}`, '')
-    return NextResponse.redirect(url)
+    url.pathname = `/${i18n.defaultLanguage}${pathname}`
+    return NextResponse.rewrite(url)
   }
 
+  // すでに言語コードがある場合はそのまま通す
   return NextResponse.next()
 }
 

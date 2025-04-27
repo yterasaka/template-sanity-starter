@@ -1099,6 +1099,13 @@
           "type": "string"
         }
       },
+      "language": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "title": {
         "type": "objectAttribute",
         "value": {
@@ -1654,6 +1661,13 @@
         "value": {
           "type": "string"
         }
+      },
+      "language": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
       },
       "title": {
         "type": "objectAttribute",
@@ -2446,6 +2460,13 @@
         "value": {
           "type": "string"
         }
+      },
+      "language": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
       },
       "title": {
         "type": "objectAttribute",

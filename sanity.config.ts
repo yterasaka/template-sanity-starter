@@ -24,9 +24,8 @@ const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Next.js Personal Website with Sanity.io'
 
 export const supportedLanguages = [
-  // If you would like to add additional languages to be used, please add them here
   {id: 'en', title: 'English'},
-  // {id: 'ja', title: '日本語'},
+  {id: 'ja', title: '日本語'},
   // {id: 'fr', title: 'Français'}
   // {id: 'de', title: 'Deutsch'}
   // {id: 'es', title: 'Español'},
@@ -55,6 +54,11 @@ export default defineConfig({
     ],
   },
   plugins: [
+    documentInternationalization({
+      // Required configuration
+      supportedLanguages,
+      schemaTypes: ['home', 'page', 'project'],
+    }),
     structureTool({
       structure: pageStructure([home, settings]),
     }),
@@ -64,11 +68,6 @@ export default defineConfig({
     }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([home.name, settings.name]),
-    // Document internationalization plugin
-    documentInternationalization({
-      supportedLanguages,
-      schemaTypes: ['home', 'page', 'project'],
-    }),
     // Add an image asset source for Unsplash
     unsplashImageAsset(),
     // Vision lets you query your content with GROQ in the studio

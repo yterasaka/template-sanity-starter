@@ -1,7 +1,8 @@
 import {defineQuery} from 'next-sanity'
 
+// クエリで正しい言語フィールドを使用
 export const homePageQuery = defineQuery(`
-  *[_type == "home" && __i18n_lang == $language][0]{
+  *[_type == "home" && language == $language][0]{
     _id,
     _type,
     overview,
@@ -18,22 +19,32 @@ export const homePageQuery = defineQuery(`
       }
     },
     title,
+    // Get the translations metadata
+    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{
+      title,
+      language
+    }
   }
 `)
 
 export const pagesBySlugQuery = defineQuery(`
-  *[_type == "page" && slug.current == $slug && __i18n_lang == $language][0] {
+  *[_type == "page" && slug.current == $slug && language == $language][0] {
     _id,
     _type,
     body,
     overview,
     title,
     "slug": slug.current,
+    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{
+      title,
+      "slug": slug.current,
+      language
+    }
   }
 `)
 
 export const projectBySlugQuery = defineQuery(`
-  *[_type == "project" && slug.current == $slug && __i18n_lang == $language][0] {
+  *[_type == "project" && slug.current == $slug && language == $language][0] {
     _id,
     _type,
     client,
@@ -45,6 +56,11 @@ export const projectBySlugQuery = defineQuery(`
     "slug": slug.current,
     tags,
     title,
+    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{
+      title,
+      "slug": slug.current,
+      language
+    }
   }
 `)
 
@@ -66,5 +82,5 @@ export const settingsQuery = defineQuery(`
 `)
 
 export const slugsByTypeQuery = defineQuery(`
-  *[_type == $type && defined(slug.current) && __i18n_lang == $language]{"slug": slug.current}
+  *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}
 `)

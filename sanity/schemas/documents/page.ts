@@ -8,6 +8,15 @@ export default defineType({
   icon: DocumentIcon,
   fields: [
     defineField({
+      // should match 'languageField' plugin configuration setting
+      name: 'language',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+      // Add a default value and initialValue
+      initialValue: 'en',
+    }),
+    defineField({
       type: 'string',
       name: 'title',
       title: 'Title',

@@ -6,9 +6,15 @@ export default defineType({
   title: 'Home',
   type: 'document',
   icon: HomeIcon,
-  // Uncomment below to have edits publish automatically as you type
-  // liveEdit: true,
   fields: [
+    defineField({
+      // should match 'languageField' plugin configuration setting
+      name: 'language',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+      initialValue: 'en',
+    }),
     defineField({
       name: 'title',
       description: 'This field is the title of your personal website.',
