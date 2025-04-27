@@ -1,7 +1,7 @@
 import {defineQuery} from 'next-sanity'
 
 export const homePageQuery = defineQuery(`
-  *[_type == "home"][0]{
+  *[_type == "home" && __i18n_lang == $language][0]{
     _id,
     _type,
     overview,
@@ -22,7 +22,7 @@ export const homePageQuery = defineQuery(`
 `)
 
 export const pagesBySlugQuery = defineQuery(`
-  *[_type == "page" && slug.current == $slug][0] {
+  *[_type == "page" && slug.current == $slug && __i18n_lang == $language][0] {
     _id,
     _type,
     body,
@@ -33,7 +33,7 @@ export const pagesBySlugQuery = defineQuery(`
 `)
 
 export const projectBySlugQuery = defineQuery(`
-  *[_type == "project" && slug.current == $slug][0] {
+  *[_type == "project" && slug.current == $slug && __i18n_lang == $language][0] {
     _id,
     _type,
     client,
@@ -66,5 +66,5 @@ export const settingsQuery = defineQuery(`
 `)
 
 export const slugsByTypeQuery = defineQuery(`
-  *[_type == $type && defined(slug.current)]{"slug": slug.current}
+  *[_type == $type && defined(slug.current) && __i18n_lang == $language]{"slug": slug.current}
 `)

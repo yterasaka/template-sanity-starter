@@ -10,8 +10,6 @@ const serif = PT_Serif({
 const sans = Inter({
   variable: '--font-sans',
   subsets: ['latin'],
-  // @todo: understand why extrabold (800) isn't being respected when explicitly specified in this weight array
-  // weight: ['500', '700', '800'],
 })
 const mono = IBM_Plex_Mono({
   variable: '--font-mono',
@@ -19,9 +17,17 @@ const mono = IBM_Plex_Mono({
   weight: ['500', '700'],
 })
 
-export default async function RootLayout({children}: {children: React.ReactNode}) {
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Promise<{lang?: string}>
+}) {
+  const {lang} = await params
+
   return (
-    <html lang="en" className={`${mono.variable} ${sans.variable} ${serif.variable}`}>
+    <html lang={lang || 'en'} className={`${mono.variable} ${sans.variable} ${serif.variable}`}>
       <body>{children}</body>
     </html>
   )

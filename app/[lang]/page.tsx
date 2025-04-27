@@ -4,8 +4,12 @@ import {sanityFetch} from '@/sanity/lib/live'
 import {homePageQuery} from '@/sanity/lib/queries'
 import Link from 'next/link'
 
-export default async function IndexRoute() {
-  const {data} = await sanityFetch({query: homePageQuery})
+export default async function IndexRoute({params}: {params: Promise<{lang: string}>}) {
+  const {lang} = await params
+  const {data} = await sanityFetch({
+    query: homePageQuery,
+    params: {language: lang},
+  })
 
   if (!data) {
     return (

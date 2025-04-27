@@ -13,6 +13,7 @@ import milestone from '@/sanity/schemas/objects/milestone'
 import timeline from '@/sanity/schemas/objects/timeline'
 import home from '@/sanity/schemas/singletons/home'
 import settings from '@/sanity/schemas/singletons/settings'
+import {documentInternationalization} from '@sanity/document-internationalization'
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
@@ -21,6 +22,17 @@ import {structureTool} from 'sanity/structure'
 
 const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Next.js Personal Website with Sanity.io'
+
+export const supportedLanguages = [
+  // If you would like to add additional languages to be used, please add them here
+  {id: 'en', title: 'English'},
+  // {id: 'ja', title: '日本語'},
+  // {id: 'fr', title: 'Français'}
+  // {id: 'de', title: 'Deutsch'}
+  // {id: 'es', title: 'Español'},
+]
+
+export const defaultLanguage = 'en'
 
 export default defineConfig({
   basePath: studioUrl,
@@ -52,6 +64,11 @@ export default defineConfig({
     }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([home.name, settings.name]),
+    // Document internationalization plugin
+    documentInternationalization({
+      supportedLanguages,
+      schemaTypes: ['home', 'page', 'project'],
+    }),
     // Add an image asset source for Unsplash
     unsplashImageAsset(),
     // Vision lets you query your content with GROQ in the studio

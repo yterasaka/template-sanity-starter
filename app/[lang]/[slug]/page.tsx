@@ -2,6 +2,7 @@ import {CustomPortableText} from '@/components/CustomPortableText'
 import {Header} from '@/components/Header'
 import ImageBox from '@/components/ImageBox'
 import {studioUrl} from '@/sanity/lib/api'
+import {i18n} from '@/sanity/lib/i18n'
 import {sanityFetch} from '@/sanity/lib/live'
 import {projectBySlugQuery, slugsByTypeQuery} from '@/sanity/lib/queries'
 import {urlForOpenGraphImage} from '@/sanity/lib/utils'
@@ -12,16 +13,17 @@ import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
 type Props = {
-  params: Promise<{slug: string}>
+  params: Promise<{lang: string; slug: string}>
 }
 
 export async function generateMetadata(
   {params}: Props,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
+  const {lang, slug} = await params
   const {data: project} = await sanityFetch({
     query: projectBySlugQuery,
-    params,
+    params: {slug, language: lang},
     stega: false,
   })
   const ogImage = urlForOpenGraphImage(
@@ -41,17 +43,35 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-  const {data} = await sanityFetch({
-    query: slugsByTypeQuery,
-    params: {type: 'project'},
-    stega: false,
-    perspective: 'published',
-  })
-  return data
+  const params: Array<{lang: string; slug: string}> = []
+
+  for (const language of i18n.supportedLanguages) {
+    const {data} = await sanityFetch({
+      query: slugsByTypeQuery,
+      params: {type: 'project', language: language.id},
+      stega: false,
+      perspective: 'published',
+    })
+
+    for (const item of data) {
+      if (item.slug) {
+        params.push({
+          lang: language.id,
+          slug: item.slug,
+        })
+      }
+    }
+  }
+
+  return params
 }
 
 export default async function ProjectSlugRoute({params}: Props) {
-  const {data} = await sanityFetch({query: projectBySlugQuery, params})
+  const {lang, slug} = await params
+  const {data} = await sanityFetch({
+    query: projectBySlugQuery,
+    params: {slug, language: lang},
+  })
 
   // Only show the 404 page if we're in production, when in draft mode we might be about to create a project on this slug, and live reload won't work on the 404 route
   if (!data?._id && !(await draftMode()).isEnabled) {

@@ -1,15 +1,18 @@
 import {OptimisticSortOrder} from '@/components/OptimisticSortOrder'
 import type {SettingsQueryResult} from '@/sanity.types'
 import {studioUrl} from '@/sanity/lib/api'
+import {i18n} from '@/sanity/lib/i18n'
 import {resolveHref} from '@/sanity/lib/utils'
 import {createDataAttribute, stegaClean} from 'next-sanity'
 import Link from 'next/link'
 
 interface NavbarProps {
   data: SettingsQueryResult
+  lang: string
 }
+
 export function Navbar(props: NavbarProps) {
-  const {data} = props
+  const {data, lang} = props
   const dataAttribute =
     data?._id && data?._type
       ? createDataAttribute({
@@ -18,6 +21,17 @@ export function Navbar(props: NavbarProps) {
           type: data._type,
         })
       : null
+
+  const getLocalizedHref = (href: string | undefined, menuItemType: string | undefined) => {
+    if (!href) return '/'
+
+    if (menuItemType === 'home') {
+      return lang === i18n.defaultLanguage ? '/' : `/${lang}`
+    }
+
+    return lang === i18n.defaultLanguage ? href : `/${lang}${href}`
+  }
+
   return (
     <header
       className="sticky top-0 z-10 flex flex-wrap items-center gap-x-5 bg-white/80 px-4 py-4 backdrop-blur md:px-16 md:py-5 lg:px-32"
@@ -29,6 +43,9 @@ export function Navbar(props: NavbarProps) {
           if (!href) {
             return null
           }
+
+          const localizedHref = getLocalizedHref(href, menuItem?._type)
+
           return (
             <Link
               key={menuItem._key}
@@ -39,13 +56,32 @@ export function Navbar(props: NavbarProps) {
                 'menuItems',
                 {_key: menuItem._key as unknown as string},
               ])}
-              href={href}
+              href={localizedHref}
             >
               {stegaClean(menuItem.title)}
             </Link>
           )
         })}
       </OptimisticSortOrder>
+
+      {/* Language Switcher */}
+      <div className="ml-auto flex gap-2">
+        {i18n.supportedLanguages.map((language) => {
+          const href = language.id === i18n.defaultLanguage ? '/' : `/${language.id}`
+
+          return (
+            <Link
+              key={language.id}
+              href={href}
+              className={`text-sm ${
+                lang === language.id ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
+              }`}
+            >
+              {language.title}
+            </Link>
+          )
+        })}
+      </div>
     </header>
   )
 }
