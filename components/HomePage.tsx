@@ -3,16 +3,17 @@ import {OptimisticSortOrder} from '@/components/OptimisticSortOrder'
 import {ProjectListItem} from '@/components/ProjectListItem'
 import type {HomePageQueryResult} from '@/sanity.types'
 import {studioUrl} from '@/sanity/lib/api'
+import {i18n} from '@/sanity/lib/i18n'
 import {resolveHref} from '@/sanity/lib/utils'
 import {createDataAttribute} from 'next-sanity'
-import {draftMode} from 'next/headers'
 import Link from 'next/link'
 
 export interface HomePageProps {
   data: HomePageQueryResult | null
+  lang: string
 }
 
-export async function HomePage({data}: HomePageProps) {
+export function HomePage({data, lang}: HomePageProps) {
   // Default to an empty object to allow previews on non-existent documents
   const {overview = [], showcaseProjects = [], title = ''} = data ?? {}
 
@@ -48,11 +49,15 @@ export async function HomePage({data}: HomePageProps) {
               if (!href) {
                 return null
               }
+
+              // Add language path if not default language
+              const localizedHref = lang === i18n.defaultLanguage ? href : `/${lang}${href}`
+
               return (
                 <Link
                   className="flex flex-col gap-x-5 p-2 transition odd:border-b odd:border-t hover:bg-gray-50/50 xl:flex-row odd:xl:flex-row-reverse"
                   key={project._key}
-                  href={href}
+                  href={localizedHref}
                   data-sanity={dataAttribute?.(['showcaseProjects', {_key: project._key}])}
                 >
                   <ProjectListItem project={project as any} />

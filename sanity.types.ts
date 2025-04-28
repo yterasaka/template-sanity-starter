@@ -762,14 +762,6 @@ export type SettingsQueryResult = {
 export type SlugsByTypeQueryResult = Array<{
   slug: string | null
 }>
-// Variable: debugQuery
-// Query: *[_type == "home"] {    _id,    _type,    language,    title  }
-export type DebugQueryResult = Array<{
-  _id: string
-  _type: 'home'
-  language: string | null
-  title: string | null
-}>
 
 declare module '@sanity/client' {
   interface SanityQueries {
@@ -778,6 +770,5 @@ declare module '@sanity/client' {
     '\n  *[_type == "project" && slug.current == $slug && language == $language][0] {\n    _id,\n    _type,\n    client,\n    coverImage,\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      "slug": slug.current,\n      language\n    }\n  }\n': ProjectBySlugQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage,\n  }\n': SettingsQueryResult
     '\n  *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}\n': SlugsByTypeQueryResult
-    '\n  *[_type == "home"] {\n    _id,\n    _type,\n    language,\n    title\n  }\n': DebugQueryResult
   }
 }

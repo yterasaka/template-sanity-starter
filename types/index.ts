@@ -22,3 +22,14 @@ export interface ShowcaseProject {
   tags?: string[]
   title?: string
 }
+
+export interface TranslatedDocument {
+  language: string | null
+  slug?: string | null
+  title?: string | null
+  _id?: string | null
+}
+
+export interface DocumentWithTranslations {
+  _translations?: (TranslatedDocument | null)[]
+}

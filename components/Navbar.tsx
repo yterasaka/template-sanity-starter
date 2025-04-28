@@ -3,16 +3,19 @@ import type {SettingsQueryResult} from '@/sanity.types'
 import {studioUrl} from '@/sanity/lib/api'
 import {i18n} from '@/sanity/lib/i18n'
 import {resolveHref} from '@/sanity/lib/utils'
+import type {TranslatedDocument} from '@/types'
 import {createDataAttribute, stegaClean} from 'next-sanity'
 import Link from 'next/link'
+import {LanguageSwitcher} from './LanguageSwitcher'
 
 interface NavbarProps {
   data: SettingsQueryResult
   lang: string
+  translations?: (TranslatedDocument | null)[] | null
 }
 
 export function Navbar(props: NavbarProps) {
-  const {data, lang} = props
+  const {data, lang, translations} = props
   const dataAttribute =
     data?._id && data?._type
       ? createDataAttribute({
@@ -65,23 +68,7 @@ export function Navbar(props: NavbarProps) {
       </OptimisticSortOrder>
 
       {/* Language Switcher */}
-      <div className="ml-auto flex gap-2">
-        {i18n.supportedLanguages.map((language) => {
-          const href = language.id === i18n.defaultLanguage ? '/' : `/${language.id}`
-
-          return (
-            <Link
-              key={language.id}
-              href={href}
-              className={`text-sm ${
-                lang === language.id ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-              }`}
-            >
-              {language.title}
-            </Link>
-          )
-        })}
-      </div>
+      <LanguageSwitcher currentLang={lang} translations={translations} />
     </header>
   )
 }

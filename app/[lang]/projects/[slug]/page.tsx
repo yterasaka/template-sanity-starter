@@ -1,10 +1,11 @@
 import {CustomPortableText} from '@/components/CustomPortableText'
 import {Header} from '@/components/Header'
 import ImageBox from '@/components/ImageBox'
+import {Navbar} from '@/components/Navbar'
 import {studioUrl} from '@/sanity/lib/api'
 import {i18n} from '@/sanity/lib/i18n'
 import {sanityFetch} from '@/sanity/lib/live'
-import {projectBySlugQuery, slugsByTypeQuery} from '@/sanity/lib/queries'
+import {projectBySlugQuery, settingsQuery, slugsByTypeQuery} from '@/sanity/lib/queries'
 import {urlForOpenGraphImage} from '@/sanity/lib/utils'
 import type {Metadata, ResolvingMetadata} from 'next'
 import {createDataAttribute, toPlainText} from 'next-sanity'
@@ -72,10 +73,13 @@ export default async function ProjectSlugRoute({params}: Props) {
 
   console.log('Project page accessed with params:', {lang, slug})
 
-  const {data} = await sanityFetch({
-    query: projectBySlugQuery,
-    params: {slug, language: lang},
-  })
+  const [{data}, {data: settings}] = await Promise.all([
+    sanityFetch({
+      query: projectBySlugQuery,
+      params: {slug, language: lang},
+    }),
+    sanityFetch({query: settingsQuery}),
+  ])
 
   console.log('Fetched project data:', data)
 
@@ -97,11 +101,12 @@ export default async function ProjectSlugRoute({params}: Props) {
   // Default to an empty object to allow previews on non-existent documents
   const {client, coverImage, description, duration, overview, site, tags, title} = data ?? {}
 
-  const startYear = new Date(duration?.start!).getFullYear()
-  const endYear = duration?.end ? new Date(duration?.end).getFullYear() : 'Now'
+  const startYear = duration?.start ? new Date(duration.start).getFullYear() : null
+  const endYear = duration?.end ? new Date(duration.end).getFullYear() : 'Now'
 
   return (
     <div>
+      <Navbar data={settings} lang={lang} translations={data?._translations} />
       <div className="mb-20 space-y-6">
         {/* Header */}
         <Header

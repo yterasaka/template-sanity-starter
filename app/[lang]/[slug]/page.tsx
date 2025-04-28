@@ -1,8 +1,9 @@
 import {CustomPortableText} from '@/components/CustomPortableText'
 import {Header} from '@/components/Header'
+import {Navbar} from '@/components/Navbar'
 import {i18n} from '@/sanity/lib/i18n'
 import {sanityFetch} from '@/sanity/lib/live'
-import {pagesBySlugQuery, slugsByTypeQuery} from '@/sanity/lib/queries'
+import {pagesBySlugQuery, settingsQuery, slugsByTypeQuery} from '@/sanity/lib/queries'
 import type {Metadata, ResolvingMetadata} from 'next'
 import {toPlainText, type PortableTextBlock} from 'next-sanity'
 import {draftMode} from 'next/headers'
@@ -59,10 +60,13 @@ export default async function PageSlugRoute({params}: Props) {
 
   console.log('Page accessed with params:', {lang, slug})
 
-  const {data} = await sanityFetch({
-    query: pagesBySlugQuery,
-    params: {slug, language: lang},
-  })
+  const [{data}, {data: settings}] = await Promise.all([
+    sanityFetch({
+      query: pagesBySlugQuery,
+      params: {slug, language: lang},
+    }),
+    sanityFetch({query: settingsQuery}),
+  ])
 
   console.log('Fetched page data:', data)
 
@@ -76,6 +80,7 @@ export default async function PageSlugRoute({params}: Props) {
 
   return (
     <div>
+      <Navbar data={settings} lang={lang} translations={data?._translations} />
       <div className="mb-14">
         {/* Header */}
         <Header
