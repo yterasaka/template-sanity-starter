@@ -10,8 +10,8 @@ import {toPlainText, VisualEditing, type PortableTextBlock} from 'next-sanity'
 import {draftMode} from 'next/headers'
 import {Suspense} from 'react'
 import {Toaster} from 'sonner'
-import {handleError} from './client-functions'
-import {DraftModeToast} from './DraftModeToast'
+import {DraftModeToast} from '../../components/DraftModeToast'
+import {handleError} from '../client-functions'
 
 export async function generateMetadata({
   params,
