@@ -17,6 +17,7 @@ import {documentInternationalization} from '@sanity/document-internationalizatio
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
+import {media} from 'sanity-plugin-media'
 import {presentationTool} from 'sanity/presentation'
 import {structureTool} from 'sanity/structure'
 
@@ -54,17 +55,19 @@ export default defineConfig({
     ],
   },
   plugins: [
-    documentInternationalization({
-      // Required configuration
-      supportedLanguages,
-      schemaTypes: ['home', 'page', 'project'],
+    presentationTool({
+      resolve,
+      previewUrl: {previewMode: {enable: '/api/draft-mode/enable'}},
     }),
     structureTool({
       structure: pageStructure([home, settings]),
     }),
-    presentationTool({
-      resolve,
-      previewUrl: {previewMode: {enable: '/api/draft-mode/enable'}},
+    media(),
+    visionTool({defaultApiVersion: apiVersion}),
+    documentInternationalization({
+      // Required configuration
+      supportedLanguages,
+      schemaTypes: ['home', 'page', 'project'],
     }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([home.name, settings.name]),
@@ -72,6 +75,5 @@ export default defineConfig({
     unsplashImageAsset(),
     // Vision lets you query your content with GROQ in the studio
     // https://www.sanity.io/docs/the-vision-plugin
-    visionTool({defaultApiVersion: apiVersion}),
   ],
 })
