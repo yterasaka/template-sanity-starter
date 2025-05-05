@@ -13,12 +13,7 @@ import milestone from '@/sanity/schemas/objects/milestone'
 import timeline from '@/sanity/schemas/objects/timeline'
 import home from '@/sanity/schemas/singletons/home'
 import settings from '@/sanity/schemas/singletons/settings'
-import {
-  dashboardTool,
-  projectInfoWidget,
-  projectUsersWidget,
-  sanityTutorialsWidget,
-} from '@sanity/dashboard'
+import {dashboardTool, projectInfoWidget, projectUsersWidget} from '@sanity/dashboard'
 import {documentInternationalization} from '@sanity/document-internationalization'
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
@@ -61,7 +56,7 @@ export default defineConfig({
     ],
   },
   plugins: [
-    dashboardTool({widgets: [sanityTutorialsWidget(), projectInfoWidget(), projectUsersWidget()]}),
+    dashboardTool({widgets: [projectInfoWidget(), projectUsersWidget()]}),
     presentationTool({
       resolve,
       previewUrl: {previewMode: {enable: '/api/draft-mode/enable'}},
