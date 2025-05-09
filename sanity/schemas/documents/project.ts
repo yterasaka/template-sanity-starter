@@ -157,4 +157,35 @@ export default defineType({
       ],
     }),
   ],
+  orderings: [
+    {
+      title: 'Title',
+      name: 'titleAsc',
+      by: [{field: 'title', direction: 'asc'}],
+    },
+    {
+      title: 'Language',
+      name: 'languageAsc',
+      by: [
+        {field: 'language', direction: 'asc'},
+        {field: 'title', direction: 'asc'},
+      ],
+    },
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      language: 'language',
+      image: 'coverImage',
+    },
+    prepare({title, language, image}) {
+      const languageUpperCase = language.toUpperCase()
+
+      return {
+        subtitle: language ? `[${languageUpperCase}]` : '',
+        title,
+        media: image ? image : ImageIcon,
+      }
+    },
+  },
 })

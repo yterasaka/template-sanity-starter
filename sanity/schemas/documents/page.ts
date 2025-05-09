@@ -124,13 +124,31 @@ export default defineType({
       ],
     }),
   ],
+  orderings: [
+    {
+      title: 'Title',
+      name: 'titleAsc',
+      by: [{field: 'title', direction: 'asc'}],
+    },
+    {
+      title: 'Language',
+      name: 'languageAsc',
+      by: [
+        {field: 'language', direction: 'asc'},
+        {field: 'title', direction: 'asc'},
+      ],
+    },
+  ],
   preview: {
     select: {
       title: 'title',
+      language: 'language',
     },
-    prepare({title}) {
+    prepare({title, language}) {
+      const languageUpperCase = language.toUpperCase()
+
       return {
-        subtitle: 'Page',
+        subtitle: language ? `[${languageUpperCase}]` : '',
         title,
       }
     },
