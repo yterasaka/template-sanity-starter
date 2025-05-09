@@ -1,6 +1,5 @@
 import '@/styles/index.css'
 import {CustomPortableText} from '@/components/CustomPortableText'
-import IntroTemplate from '@/intro-template'
 import {i18n} from '@/sanity/lib/i18n'
 import {sanityFetch, SanityLive} from '@/sanity/lib/live'
 import {homePageQuery, settingsQuery} from '@/sanity/lib/queries'
@@ -8,7 +7,6 @@ import {urlForOpenGraphImage} from '@/sanity/lib/utils'
 import type {Metadata, Viewport} from 'next'
 import {toPlainText, VisualEditing, type PortableTextBlock} from 'next-sanity'
 import {draftMode} from 'next/headers'
-import {Suspense} from 'react'
 import {Toaster} from 'sonner'
 import {DraftModeToast} from '../../components/DraftModeToast'
 import {handleError} from '../client-functions'
@@ -76,9 +74,6 @@ export default async function LangLayout({
           />
         )}
       </footer>
-      <Suspense>
-        <IntroTemplate />
-      </Suspense>
       <Toaster />
       <SanityLive onError={handleError} />
       {(await draftMode()).isEnabled && (
