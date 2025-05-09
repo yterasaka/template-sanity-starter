@@ -1,6 +1,5 @@
 import {defineQuery} from 'next-sanity'
 
-// クエリで正しい言語フィールドを使用
 export const homePageQuery = defineQuery(`
   *[_type == "home" && language == $language][0]{
     _id,
@@ -19,7 +18,6 @@ export const homePageQuery = defineQuery(`
       }
     },
     title,
-    // Get the translations metadata
     "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{
       title,
       language
@@ -84,14 +82,3 @@ export const settingsQuery = defineQuery(`
 export const slugsByTypeQuery = defineQuery(`
   *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}
 `)
-
-export const SITEMAP_QUERY = defineQuery(`
-  *[_type in ["page", "post"] && defined(slug.current)] {
-      "href": select(
-        _type == "page" => "/" + slug.current,
-        _type == "post" => "/posts/" + slug.current,
-        slug.current
-      ),
-      _updatedAt
-  }
-  `)
