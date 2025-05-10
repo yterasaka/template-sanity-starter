@@ -487,7 +487,7 @@ export type AllSanitySchemaTypes =
 export declare const internalGroqTypeReferenceTo: unique symbol
 // Source: ./sanity/lib/queries.ts
 // Variable: homePageQuery
-// Query: *[_type == "home" && language == $language][0]{    _id,    _type,    overview,    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage,        overview,        "slug": slug.current,        tags,        title,      }    },    title,    // Get the translations metadata    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{      title,      language    }  }
+// Query: *[_type == "home" && language == $language][0]{    _id,    _type,    overview,    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage,        overview,        "slug": slug.current,        tags,        title,      }    },    title,    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{      title,      language    }  }
 export type HomePageQueryResult = {
   _id: string
   _type: 'home'
@@ -772,20 +772,13 @@ export type SettingsQueryResult = {
 export type SlugsByTypeQueryResult = Array<{
   slug: string | null
 }>
-// Variable: SITEMAP_QUERY
-// Query: *[_type in ["page", "post"] && defined(slug.current)] {      "href": select(        _type == "page" => "/" + slug.current,        _type == "post" => "/posts/" + slug.current,        slug.current      ),      _updatedAt  }
-export type SITEMAP_QUERYResult = Array<{
-  href: string | null
-  _updatedAt: string
-}>
 
 declare module '@sanity/client' {
   interface SanityQueries {
-    '\n  *[_type == "home" && language == $language][0]{\n    _id,\n    _type,\n    overview,\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage,\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n      }\n    },\n    title,\n    // Get the translations metadata\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      language\n    }\n  }\n': HomePageQueryResult
+    '\n  *[_type == "home" && language == $language][0]{\n    _id,\n    _type,\n    overview,\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage,\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n      }\n    },\n    title,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      language\n    }\n  }\n': HomePageQueryResult
     '\n  *[_type == "page" && slug.current == $slug && language == $language][0] {\n    _id,\n    _type,\n    body,\n    overview,\n    title,\n    "slug": slug.current,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      "slug": slug.current,\n      language\n    }\n  }\n': PagesBySlugQueryResult
     '\n  *[_type == "project" && slug.current == $slug && language == $language][0] {\n    _id,\n    _type,\n    client,\n    coverImage,\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      "slug": slug.current,\n      language\n    }\n  }\n': ProjectBySlugQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage,\n  }\n': SettingsQueryResult
     '\n  *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}\n': SlugsByTypeQueryResult
-    '\n  *[_type in ["page", "post"] && defined(slug.current)] {\n      "href": select(\n        _type == "page" => "/" + slug.current,\n        _type == "post" => "/posts/" + slug.current,\n        slug.current\n      ),\n      _updatedAt\n  }\n  ': SITEMAP_QUERYResult
   }
 }

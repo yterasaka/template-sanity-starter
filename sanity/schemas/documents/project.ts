@@ -182,8 +182,8 @@ export default defineType({
       const languageUpperCase = language.toUpperCase()
 
       return {
-        subtitle: language ? `[${languageUpperCase}]` : '',
         title,
+        subtitle: language ? `[${languageUpperCase}]` : '',
         media: image ? image : ImageIcon,
       }
     },
