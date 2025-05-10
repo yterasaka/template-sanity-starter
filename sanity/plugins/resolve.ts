@@ -2,7 +2,7 @@
  * Sets up the Presentation Resolver API,
  * see https://www.sanity.io/docs/presentation-resolver-api for more information.
  */
-
+import {i18n} from '@/sanity/lib/i18n'
 import {resolveHref} from '@/sanity/lib/utils'
 import {defineDocuments, defineLocations} from 'sanity/presentation'
 
@@ -11,10 +11,32 @@ export const mainDocuments = defineDocuments([
     route: '/projects/:slug',
     filter: `_type == "project" && slug.current == $slug`,
   },
+  ...i18n.supportedLanguages
+    .filter((lang) => lang.id !== i18n.defaultLanguage)
+    .map((lang) => ({
+      route: `/${lang.id}/projects/:slug`,
+      filter: `_type == "project" && slug.current == $slug && language == "${lang.id}"`,
+    })),
+  {
+    route: '/',
+    filter: `_type == "home" && language == "${i18n.defaultLanguage}"`,
+  },
+  ...i18n.supportedLanguages
+    .filter((lang) => lang.id !== i18n.defaultLanguage)
+    .map((lang) => ({
+      route: `/${lang.id}`,
+      filter: `_type == "home" && language == "${lang.id}"`,
+    })),
   {
     route: '/:slug',
     filter: `_type == "page" && slug.current == $slug`,
   },
+  ...i18n.supportedLanguages
+    .filter((lang) => lang.id !== i18n.defaultLanguage)
+    .map((lang) => ({
+      route: `/${lang.id}/:slug`,
+      filter: `_type == "page" && slug.current == $slug && language == "${lang.id}"`,
+    })),
 ])
 
 export const locations = {
