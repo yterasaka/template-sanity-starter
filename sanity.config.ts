@@ -5,7 +5,8 @@
  */
 import {apiVersion, dataset, projectId, studioUrl} from '@/sanity/lib/api'
 import * as resolve from '@/sanity/plugins/resolve'
-import {pageStructure, singletonPlugin} from '@/sanity/plugins/settings'
+import {singletonPlugin} from '@/sanity/plugins/settings'
+import {structure} from '@/sanity/plugins/structure'
 import footer from '@/sanity/schemas/documents/footer'
 import navigation from '@/sanity/schemas/documents/navigation'
 import page from '@/sanity/schemas/documents/page'
@@ -66,20 +67,15 @@ export default defineConfig({
       previewUrl: {previewMode: {enable: '/api/draft-mode/enable'}},
     }),
     structureTool({
-      structure: pageStructure([home, settings]),
+      structure,
     }),
     media(),
     visionTool({defaultApiVersion: apiVersion}),
     documentInternationalization({
-      // Required configuration
       supportedLanguages,
       schemaTypes: ['home', 'page', 'project', 'navigation', 'footer'],
     }),
-    // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([home.name, settings.name]),
-    // Add an image asset source for Unsplash
     unsplashImageAsset(),
-    // Vision lets you query your content with GROQ in the studio
-    // https://www.sanity.io/docs/the-vision-plugin
   ],
 })
