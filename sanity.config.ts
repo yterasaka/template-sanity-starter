@@ -25,8 +25,7 @@ import {media} from 'sanity-plugin-media'
 import {presentationTool} from 'sanity/presentation'
 import {structureTool} from 'sanity/structure'
 
-const title =
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Next.js Personal Website with Sanity.io'
+const title = process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Next.js + Sanity Starter Template'
 
 export const supportedLanguages = [
   {id: 'en', title: 'English'},
