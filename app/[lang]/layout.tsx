@@ -2,7 +2,7 @@ import '@/styles/index.css'
 import {CustomPortableText} from '@/components/CustomPortableText'
 import {i18n} from '@/sanity/lib/i18n'
 import {sanityFetch, SanityLive} from '@/sanity/lib/live'
-import {homePageQuery, settingsQuery} from '@/sanity/lib/queries'
+import {footerQuery, homePageQuery, settingsQuery} from '@/sanity/lib/queries'
 import {urlForOpenGraphImage} from '@/sanity/lib/utils'
 import type {Metadata, Viewport} from 'next'
 import {toPlainText, VisualEditing, type PortableTextBlock} from 'next-sanity'
@@ -58,19 +58,19 @@ export default async function LangLayout({
   params: Promise<{lang: string}>
 }) {
   const {lang} = await params
-  const {data} = await sanityFetch({query: settingsQuery})
+  const {data: footerData} = await sanityFetch({query: footerQuery, params: {language: lang}})
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-black">
       <div className="flex-grow px-4 md:px-16 lg:px-32">{children}</div>
       <footer className="bottom-0 w-full bg-white py-12 text-center md:py-20">
-        {data?.footer && (
+        {footerData?.footerContent && (
           <CustomPortableText
-            id={data._id}
-            type={data._type}
-            path={['footer']}
+            id={footerData._id}
+            type={footerData._type}
+            path={['footerContent']}
             paragraphClasses="text-md md:text-xl"
-            value={data.footer as unknown as PortableTextBlock[]}
+            value={footerData.footerContent as unknown as PortableTextBlock[]}
           />
         )}
       </footer>

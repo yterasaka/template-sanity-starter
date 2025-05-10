@@ -2,6 +2,8 @@ import {OptimisticSortOrder} from '@/components/OptimisticSortOrder'
 import type {SettingsQueryResult} from '@/sanity.types'
 import {studioUrl} from '@/sanity/lib/api'
 import {i18n} from '@/sanity/lib/i18n'
+import {sanityFetch} from '@/sanity/lib/live'
+import {navigationQuery} from '@/sanity/lib/queries'
 import {resolveHref} from '@/sanity/lib/utils'
 import type {TranslatedDocument} from '@/types'
 import {createDataAttribute, stegaClean} from 'next-sanity'
@@ -14,14 +16,19 @@ interface NavbarProps {
   translations?: (TranslatedDocument | null)[] | null
 }
 
-export function Navbar(props: NavbarProps) {
-  const {data, lang, translations} = props
+export async function Navbar(props: NavbarProps) {
+  const {data: settings, lang, translations} = props
+  const {data: navigationData} = await sanityFetch({
+    query: navigationQuery,
+    params: {language: lang},
+  })
+
   const dataAttribute =
-    data?._id && data?._type
+    navigationData?._id && navigationData?._type
       ? createDataAttribute({
           baseUrl: studioUrl,
-          id: data._id,
-          type: data._type,
+          id: navigationData._id,
+          type: navigationData._type,
         })
       : null
 
@@ -40,8 +47,8 @@ export function Navbar(props: NavbarProps) {
       className="sticky top-0 z-10 flex flex-wrap items-center gap-x-5 bg-white/80 px-4 py-4 backdrop-blur md:px-16 md:py-5 lg:px-32"
       data-sanity={dataAttribute?.('menuItems')}
     >
-      <OptimisticSortOrder id={data?._id!} path="menuItems">
-        {data?.menuItems?.map((menuItem) => {
+      <OptimisticSortOrder id={navigationData?._id!} path="menuItems">
+        {navigationData?.menuItems?.map((menuItem) => {
           const href = resolveHref(menuItem?._type, menuItem?.slug)
           if (!href) {
             return null

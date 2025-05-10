@@ -6,6 +6,8 @@
 import {apiVersion, dataset, projectId, studioUrl} from '@/sanity/lib/api'
 import * as resolve from '@/sanity/plugins/resolve'
 import {pageStructure, singletonPlugin} from '@/sanity/plugins/settings'
+import footer from '@/sanity/schemas/documents/footer'
+import navigation from '@/sanity/schemas/documents/navigation'
 import page from '@/sanity/schemas/documents/page'
 import project from '@/sanity/schemas/documents/project'
 import duration from '@/sanity/schemas/objects/duration'
@@ -48,6 +50,8 @@ export default defineConfig({
       settings,
       // Documents
       duration,
+      footer,
+      navigation,
       page,
       project,
       // Objects
@@ -69,7 +73,7 @@ export default defineConfig({
     documentInternationalization({
       // Required configuration
       supportedLanguages,
-      schemaTypes: ['home', 'page', 'project'],
+      schemaTypes: ['home', 'page', 'project', 'navigation', 'footer'],
     }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([home.name, settings.name]),

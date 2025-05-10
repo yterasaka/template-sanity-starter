@@ -79,6 +79,39 @@ export const settingsQuery = defineQuery(`
   }
 `)
 
+export const navigationQuery = defineQuery(`
+  *[_type == "navigation" && language == $language][0]{
+    _id,
+    _type,
+    title,
+    menuItems[]{
+      _key,
+      ...@->{
+        _type,
+        "slug": slug.current,
+        title
+      }
+    },
+    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{
+      title,
+      language
+    }
+  }
+`)
+
+export const footerQuery = defineQuery(`
+  *[_type == "footer" && language == $language][0]{
+    _id,
+    _type,
+    title,
+    footerContent,
+    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{
+      title,
+      language
+    }
+  }
+`)
+
 export const slugsByTypeQuery = defineQuery(`
   *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}
 `)

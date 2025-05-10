@@ -111,44 +111,6 @@ export type Settings = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  menuItems?: Array<
-    | {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'home'
-      }
-    | {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'page'
-      }
-    | {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'project'
-      }
-  >
-  footer?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
   ogImage?: {
     asset?: {
       _ref: string
@@ -161,6 +123,7 @@ export type Settings = {
     crop?: SanityImageCrop
     _type: 'image'
   }
+  analytics?: string
 }
 
 export type TranslationMetadata = {
@@ -198,6 +161,76 @@ export type InternationalizedArrayReferenceValue = {
         _weak?: boolean
         [internalGroqTypeReferenceTo]?: 'project'
       }
+    | {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'navigation'
+      }
+    | {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'footer'
+      }
+}
+
+export type Footer = {
+  _id: string
+  _type: 'footer'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  language?: string
+  title?: string
+  footerContent?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+}
+
+export type Navigation = {
+  _id: string
+  _type: 'navigation'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  language?: string
+  title?: string
+  menuItems?: Array<
+    | {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'home'
+      }
+    | {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'page'
+      }
+    | {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'project'
+      }
+  >
 }
 
 export type Project = {
@@ -472,6 +505,8 @@ export type AllSanitySchemaTypes =
   | Settings
   | TranslationMetadata
   | InternationalizedArrayReferenceValue
+  | Footer
+  | Navigation
   | Project
   | Duration
   | Page
@@ -716,24 +751,27 @@ export type ProjectBySlugQueryResult = {
 export type SettingsQueryResult = {
   _id: string
   _type: 'settings'
-  footer: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }> | null
+  footer: null
+  menuItems: null
+  ogImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  } | null
+} | null
+// Variable: navigationQuery
+// Query: *[_type == "navigation" && language == $language][0]{    _id,    _type,    title,    menuItems[]{      _key,      ...@->{        _type,        "slug": slug.current,        title      }    },    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{      title,      language    }  }
+export type NavigationQueryResult = {
+  _id: string
+  _type: 'navigation'
+  title: string | null
   menuItems: Array<
     | {
         _key: null
@@ -754,18 +792,39 @@ export type SettingsQueryResult = {
         title: string | null
       }
   > | null
-  ogImage: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  } | null
+  _translations: Array<{
+    title: string | null
+    language: string | null
+  } | null>
+} | null
+// Variable: footerQuery
+// Query: *[_type == "footer" && language == $language][0]{    _id,    _type,    title,    footerContent,    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{      title,      language    }  }
+export type FooterQueryResult = {
+  _id: string
+  _type: 'footer'
+  title: string | null
+  footerContent: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }> | null
+  _translations: Array<{
+    title: string | null
+    language: string | null
+  } | null>
 } | null
 // Variable: slugsByTypeQuery
 // Query: *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}
@@ -779,6 +838,8 @@ declare module '@sanity/client' {
     '\n  *[_type == "page" && slug.current == $slug && language == $language][0] {\n    _id,\n    _type,\n    body,\n    overview,\n    title,\n    "slug": slug.current,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      "slug": slug.current,\n      language\n    }\n  }\n': PagesBySlugQueryResult
     '\n  *[_type == "project" && slug.current == $slug && language == $language][0] {\n    _id,\n    _type,\n    client,\n    coverImage,\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      "slug": slug.current,\n      language\n    }\n  }\n': ProjectBySlugQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage,\n  }\n': SettingsQueryResult
+    '\n  *[_type == "navigation" && language == $language][0]{\n    _id,\n    _type,\n    title,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      language\n    }\n  }\n': NavigationQueryResult
+    '\n  *[_type == "footer" && language == $language][0]{\n    _id,\n    _type,\n    title,\n    footerContent,\n    "_translations": *[_type == "translation.metadata" && references(^._id)].translations[].value->{\n      title,\n      language\n    }\n  }\n': FooterQueryResult
     '\n  *[_type == $type && defined(slug.current) && language == $language]{"slug": slug.current}\n': SlugsByTypeQueryResult
   }
 }
