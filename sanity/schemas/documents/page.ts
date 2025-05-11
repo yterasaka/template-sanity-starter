@@ -6,6 +6,17 @@ export default defineType({
   name: 'page',
   title: 'Page',
   icon: DocumentIcon,
+  groups: [
+    {
+      name: 'content',
+      title: 'Content',
+    },
+    {
+      name: 'seo',
+      title: 'SEO',
+      default: false,
+    },
+  ],
   fields: [
     defineField({
       // should match 'languageField' plugin configuration setting
@@ -15,12 +26,14 @@ export default defineType({
       hidden: true,
       // Add a default value and initialValue
       initialValue: 'en',
+      group: 'content',
     }),
     defineField({
       type: 'string',
       name: 'title',
       title: 'Title',
       validation: (rule) => rule.required(),
+      group: ['content', 'seo'],
     }),
     defineField({
       type: 'slug',
@@ -30,6 +43,7 @@ export default defineType({
         source: 'title',
       },
       validation: (rule) => rule.required(),
+      group: ['content', 'seo'],
     }),
     defineField({
       name: 'overview',
@@ -59,6 +73,7 @@ export default defineType({
         }),
       ],
       validation: (rule) => rule.max(155).required(),
+      group: ['content', 'seo'],
     }),
     defineField({
       type: 'array',
@@ -122,6 +137,7 @@ export default defineType({
           ],
         }),
       ],
+      group: 'content', // Assign body to content group
     }),
   ],
   orderings: [

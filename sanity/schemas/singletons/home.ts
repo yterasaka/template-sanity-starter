@@ -6,6 +6,17 @@ export default defineType({
   title: 'Home',
   type: 'document',
   icon: HomeIcon,
+  groups: [
+    {
+      name: 'content',
+      title: 'Content',
+    },
+    {
+      name: 'seo',
+      title: 'SEO',
+      default: false,
+    },
+  ],
   fields: [
     defineField({
       // should match 'languageField' plugin configuration setting
@@ -14,6 +25,7 @@ export default defineType({
       readOnly: true,
       hidden: true,
       initialValue: 'en',
+      group: 'content',
     }),
     defineField({
       name: 'title',
@@ -21,6 +33,7 @@ export default defineType({
       title: 'Title',
       type: 'string',
       validation: (rule) => rule.required(),
+      group: ['content', 'seo'],
     }),
     defineField({
       name: 'overview',
@@ -63,6 +76,7 @@ export default defineType({
         }),
       ],
       validation: (rule) => rule.max(155).required(),
+      group: ['content', 'seo'],
     }),
     defineField({
       name: 'showcaseProjects',
@@ -75,6 +89,7 @@ export default defineType({
           to: [{type: 'project'}],
         }),
       ],
+      group: 'content',
     }),
   ],
   preview: {
